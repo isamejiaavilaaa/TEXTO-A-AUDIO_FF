@@ -1,11 +1,15 @@
-import streamlit as st
 import os
+
+# Instalación automática de dependencias
+os.system('pip install streamlit gtts googletrans==4.0.0-rc1 pillow')
+
+import streamlit as st
 import time
 import glob
 from gtts import gTTS
 from PIL import Image
 import base64
-from googletrans import Translator  # Para traducción automática
+from googletrans import Translator  # Traducción automática
 
 # Configuración inicial
 st.title("Conversión de Texto a Audio")
@@ -32,15 +36,27 @@ st.write(
 st.markdown("¿Quieres escucharlo? Copia el texto:")
 text = st.text_area("Ingrese el texto a escuchar.")
 
-# Selección del idioma
-option_lang = st.selectbox("Selecciona el lenguaje", ("Español", "English"))
+# Selección del idioma con más opciones
+option_lang = st.selectbox(
+    "Selecciona el lenguaje",
+    ("Español", "English", "Deutsch", "한국어 (Coreano)", "Esperanto")
+)
+
+# Diccionario para convertir selección a códigos de idioma
+lang_codes = {
+    "Español": "es",
+    "English": "en",
+    "Deutsch": "de",
+    "한국어 (Coreano)": "ko",
+    "Esperanto": "eo"
+}
 
 # Inicializamos el traductor
 translator = Translator()
 
-# Función para traducción automática si el idioma es inglés
+# Función para traducir texto
 def translate_text(text, target_lang):
-    if target_lang == 'en':
+    if target_lang != 'es':  # Si no es español, traducimos
         translated = translator.translate(text, dest=target_lang).text
         return translated
     return text  # Si es español, no se traduce
@@ -53,8 +69,8 @@ def text_to_speech(text, lang):
     tts.save(file_path)
     return file_path
 
-# Convertir idioma seleccionado a código de lenguaje
-lang_code = 'es' if option_lang == "Español" else 'en'
+# Convertimos la opción seleccionada a código de lenguaje
+lang_code = lang_codes[option_lang]
 
 # Botón para convertir texto a audio
 if st.button("Convertir a Audio"):
@@ -63,13 +79,13 @@ if st.button("Convertir a Audio"):
         translated_text = translate_text(text, lang_code)
         audio_path = text_to_speech(translated_text, lang_code)
 
-        # Mostrar audio en la app
+        # Mostrar el audio en la app
         audio_file = open(audio_path, "rb")
         audio_bytes = audio_file.read()
         st.markdown("## Tu audio:")
         st.audio(audio_bytes, format="audio/mp3", start_time=0)
 
-        # Opción para descargar el archivo de audio
+        # Enlace para descargar el archivo de audio
         def get_binary_file_downloader_html(file_path, file_label='Audio File'):
             with open(file_path, "rb") as f:
                 data = f.read()
@@ -91,6 +107,6 @@ def remove_files(days_old):
             os.remove(f)
             print(f"Deleted {f}")
 
-# Eliminar archivos de audio antiguos
+# Eliminar archivos antiguos cada 7 días
 remove_files(7)
 
