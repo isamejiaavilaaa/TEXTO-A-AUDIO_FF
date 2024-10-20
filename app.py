@@ -36,13 +36,13 @@ st.write(
 st.markdown("¿Quieres escucharlo? Copia el texto:")
 text = st.text_area("Ingrese el texto a escuchar.")
 
-# Selección del idioma con más opciones
+# Opciones del idioma con sus respectivos códigos
 option_lang = st.selectbox(
     "Selecciona el lenguaje",
-    ("Español", "English", "Deutsch", "한국어 (Coreano)", "Esperanto")
+    ["Español", "English", "Deutsch", "한국어 (Coreano)", "Esperanto"]
 )
 
-# Diccionario para convertir selección a códigos de idioma
+# Diccionario para convertir la selección a códigos de idioma
 lang_codes = {
     "Español": "es",
     "English": "en",
