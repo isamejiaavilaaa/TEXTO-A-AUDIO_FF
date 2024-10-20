@@ -48,7 +48,7 @@ lang_codes = {
     "English": "en",
     "Deutsch": "de",
     "한국어 (Coreano)": "ko",
-    "Esperanto": "eo"
+    "Esperanto": "eo"  # Esperanto para la traducción
 }
 
 # Inicializamos el traductor
@@ -63,7 +63,12 @@ def translate_text(text, target_lang):
 
 # Función para convertir texto a audio
 def text_to_speech(text, lang):
-    tts = gTTS(text=text, lang=lang)
+    # Si el idioma es Esperanto, usamos 'en' para el audio
+    if lang == "eo":
+        tts = gTTS(text=text, lang="en")  # Usar inglés como fallback
+    else:
+        tts = gTTS(text=text, lang=lang)
+    
     file_name = text[:20].strip().replace(" ", "_") + ".mp3"
     file_path = f"temp/{file_name}"
     tts.save(file_path)
@@ -109,4 +114,6 @@ def remove_files(days_old):
 
 # Eliminar archivos antiguos cada 7 días
 remove_files(7)
+
+
 
